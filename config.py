@@ -23,8 +23,6 @@ BRAND = {
     "competitors_weakness": "경쟁 샵들은 힐링·스웨디시·가격 할인에 집중 → 아로마스는 통증 해결 전문성으로 차별화",
 }
 
-MODEL = "claude-opus-4-6"
-
 # 주 10개 포스팅 구성 (7일치 발행)
 WEEKLY_POST_PLAN = [
     {"post_id": 1,  "type": "문제 공감형",  "funnel": "TOFU", "topic_hint": "어깨·목 통증"},
