@@ -5,29 +5,42 @@ SEO 전략가 → 콘텐츠 라이터 → 텍스트마이닝 분석가 → QC �
 claude-agent-sdk 사용 → Claude Pro 구독으로 API 키 없이 실행 가능
 """
 
+import asyncio
 import json
 import re
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 from config import BRAND, QC_CHECKLIST_ITEMS, THREADS_ALGO_RULES
 
+# 연속 호출 간격 (초) — 속도 제한 방지
+_CALL_DELAY = 3
 
-async def _call(system: str, user: str, label: str) -> str:
-    """Agent SDK로 Claude 비동기 호출, 최종 텍스트 반환."""
-    print(f"\n  ⟳ [{label}] 작업 중...", flush=True)
 
-    result = ""
-    async for message in query(
-        prompt=user,
-        options=ClaudeAgentOptions(
-            system_prompt=system,
-            allowed_tools=[],   # 순수 텍스트 생성 — 파일 도구 불필요
-        ),
-    ):
-        if isinstance(message, ResultMessage):
-            result = message.result
-
-    print(f"  ✓ [{label}] 완료", flush=True)
-    return result
+async def _call(system: str, user: str, label: str, retries: int = 2) -> str:
+    """Agent SDK로 Claude 비동기 호출. 실패 시 최대 retries회 재시도."""
+    for attempt in range(retries + 1):
+        try:
+            print(f"\n  ⟳ [{label}] 작업 중{'.' * (attempt + 1)}", flush=True)
+            result = ""
+            async for message in query(
+                prompt=user,
+                options=ClaudeAgentOptions(
+                    system_prompt=system,
+                    allowed_tools=[],   # 순수 텍스트 생성 — 파일 도구 불필요
+                ),
+            ):
+                if isinstance(message, ResultMessage):
+                    result = message.result
+            print(f"  ✓ [{label}] 완료", flush=True)
+            await asyncio.sleep(_CALL_DELAY)
+            return result
+        except Exception as e:
+            if attempt < retries:
+                wait = 8 * (attempt + 1)
+                print(f"  ↺ [{label}] 오류 — {wait}초 후 재시도... ({e})", flush=True)
+                await asyncio.sleep(wait)
+            else:
+                raise
+    return ""
 
 
 def _parse_json_obj(raw: str, fallback: dict) -> dict:
