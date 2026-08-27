@@ -23,18 +23,61 @@ BRAND = {
     "competitors_weakness": "경쟁 샵들은 힐링·스웨디시·가격 할인에 집중 → 아로마스는 통증 해결 전문성으로 차별화",
 }
 
-# 주 10개 포스팅 구성 (7일치 발행)
+# ---------------------------------------------------------------------------
+# 신규 포스트 작성 계획 (2026-09 ~ 10 / 4주 × 3편)
+#
+# 기존 블로그 49편 커버리지 분석 결과 도출한 "빈 곳"만 골라 배치했다.
+#   - 이미 다룬 주제(허리·무릎·손목·부종·피로 등)는 중복 발행하지 않는다
+#     → 같은 키워드로 두 글이 경쟁하면 둘 다 순위가 내려간다(자기잠식)
+#   - 기존 49편에 BOFU(결정 단계) 글이 사실상 0편 → 주 1편씩 채운다
+#   - 여성 타깃(생리통·산후·수족냉증) 미커버 → 청라 신도시 고객층과 직결
+#
+# target_keyword = 네이버 검색창에 실제로 치는 말. 제목·첫줄·끝줄에 이 말 그대로.
+# ---------------------------------------------------------------------------
 WEEKLY_POST_PLAN = [
-    {"post_id": 1,  "type": "문제 공감형",  "funnel": "TOFU", "topic_hint": "어깨·목 통증"},
-    {"post_id": 2,  "type": "문제 공감형",  "funnel": "TOFU", "topic_hint": "만성 피로"},
-    {"post_id": 3,  "type": "문제 공감형",  "funnel": "TOFU", "topic_hint": "몸이 무거운 이유"},
-    {"post_id": 4,  "type": "정보·지식형",  "funnel": "MOFU", "topic_hint": "병원 이상 없는데 왜 아픈가"},
-    {"post_id": 5,  "type": "정보·지식형",  "funnel": "MOFU", "topic_hint": "혈액순환과 통증의 관계"},
-    {"post_id": 6,  "type": "케이스·경험형", "funnel": "MOFU", "topic_hint": "만성 목 통증 고객 변화 3회 이야기"},
-    {"post_id": 7,  "type": "케이스·경험형", "funnel": "MOFU", "topic_hint": "어깨 결림 직장인 사례"},
-    {"post_id": 8,  "type": "시리즈 연재",   "funnel": "TOFU", "topic_hint": "통증 없는 일상 7일 프로젝트 — 1편"},
-    {"post_id": 9,  "type": "시리즈 연재",   "funnel": "MOFU", "topic_hint": "통증 없는 일상 7일 프로젝트 — 2편"},
-    {"post_id": 10, "type": "전환형",        "funnel": "BOFU", "topic_hint": "아로마스 전자책·예약 CTA (PM 승인 후)"},
+    # --- 1주차: BOFU 공백 메우기 (결정 직전 검색어를 먼저 잡는다) ---
+    {"post_id": 1,  "week": 1, "type": "정보·지식형",  "funnel": "MOFU",
+     "target_keyword": "아로마마사지 스웨디시 차이",
+     "topic_hint": "아로마마사지와 스웨디시 차이 — 내 몸엔 뭐가 맞을까"},
+    {"post_id": 2,  "week": 1, "type": "정보·지식형",  "funnel": "MOFU",
+     "target_keyword": "마사지 후 몸살",
+     "topic_hint": "마사지 받고 다음날 더 아픈 이유 — 명현반응과 위험 신호 구분법"},
+    {"post_id": 3,  "week": 1, "type": "문제 공감형",  "funnel": "TOFU",
+     "target_keyword": "거북목 증상",
+     "topic_hint": "거북목이 되면 몸에서 먼저 나타나는 신호"},
+
+    # --- 2주차: 미커버 대형 증상 키워드 ---
+    {"post_id": 4,  "week": 2, "type": "문제 공감형",  "funnel": "TOFU",
+     "target_keyword": "오십견 초기증상",
+     "topic_hint": "오십견 초기증상 — 단순 어깨 결림과 뭐가 다를까"},
+    {"post_id": 5,  "week": 2, "type": "정보·지식형",  "funnel": "BOFU",
+     "target_keyword": "마사지 주기",
+     "topic_hint": "마사지 얼마나 자주 받아야 할까 — 증상별 적정 주기"},
+    {"post_id": 6,  "week": 2, "type": "문제 공감형",  "funnel": "TOFU",
+     "target_keyword": "수족냉증 원인",
+     "topic_hint": "손발이 늘 찬 이유 — 수족냉증은 순환의 문제다"},
+
+    # --- 3주차: 여성 타깃 확장 (현재 블로그에 거의 없는 축) ---
+    {"post_id": 7,  "week": 3, "type": "정보·지식형",  "funnel": "TOFU",
+     "target_keyword": "생리통 완화 방법",
+     "topic_hint": "생리통 완화에 도움되는 아로마 오일과 복부 이완법"},
+    {"post_id": 8,  "week": 3, "type": "케이스·경험형", "funnel": "MOFU",
+     "target_keyword": "산후 부종",
+     "topic_hint": "산후 부종이 안 빠지던 30대 고객님 케이스"},
+    {"post_id": 9,  "week": 3, "type": "문제 공감형",  "funnel": "TOFU",
+     "target_keyword": "라운드숄더 교정",
+     "topic_hint": "굽은 어깨(라운드숄더), 자세가 아니라 근육이 만든 결과"},
+
+    # --- 4주차: 시즌(추석 2026-09-25) + 지역 전환 ---
+    {"post_id": 10, "week": 4, "type": "문제 공감형",  "funnel": "TOFU",
+     "target_keyword": "명절증후군 허리통증",
+     "topic_hint": "명절 끝나고 허리·손목이 아픈 이유 (추석 직전 발행)"},
+    {"post_id": 11, "week": 4, "type": "정보·지식형",  "funnel": "MOFU",
+     "target_keyword": "턱관절 통증 원인",
+     "topic_hint": "턱에서 소리가 나고 아픈 이유 — 턱관절과 목의 연결"},
+    {"post_id": 12, "week": 4, "type": "전환형",       "funnel": "BOFU",
+     "target_keyword": "청라 마사지 추천",
+     "topic_hint": "청라에서 마사지샵 고를 때 확인해야 할 5가지"},
 ]
 
 QC_CHECKLIST_ITEMS = [

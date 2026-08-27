@@ -49,16 +49,19 @@ async def run_pipeline(plan: dict, skip_bofu: bool = False) -> dict | None:
     post_type = plan["type"]
     funnel    = plan["funnel"]
     topic     = plan["topic_hint"]
+    target_kw = plan.get("target_keyword", "")
 
     if skip_bofu and funnel == "BOFU":
         print(f"\n  >> 포스팅 #{post_id} [{post_type}] - BOFU 건너뜀 (PM 승인 대기)")
         return None
 
     banner(f"포스팅 #{post_id} | {post_type} ({funnel}) | {topic}")
+    if target_kw:
+        print(f"  타깃 검색어: {target_kw}")
 
     # Step 0: PM
     step_header(0, "PM 총괄 기획자 - 포스팅 브리프 작성")
-    brief = await pm_brief(post_type, funnel, topic)
+    brief = await pm_brief(post_type, funnel, topic, target_keyword=target_kw)
     print(f"     방향: {brief.get('direction', '-')}")
     print(f"     타깃: {brief.get('target_reader', '-')}")
     if brief.get("caution"):
@@ -66,7 +69,7 @@ async def run_pipeline(plan: dict, skip_bofu: bool = False) -> dict | None:
 
     # Step 1: SEO
     step_header(1, "SEO 전략가 - 키워드 설계")
-    seo = await seo_strategist(post_type, funnel, topic, brief=brief)
+    seo = await seo_strategist(post_type, funnel, topic, brief=brief, target_keyword=target_kw)
     print(f"     메인 키워드: {seo['main_keyword']}")
     print(f"     맥락 키워드: {', '.join(seo.get('context_keywords', []))}")
     print(f"     제목 후보:")
@@ -123,6 +126,8 @@ async def run_pipeline(plan: dict, skip_bofu: bool = False) -> dict | None:
         "post_type": post_type,
         "funnel": funnel,
         "topic": topic,
+        "week": plan.get("week"),
+        "target_keyword": target_kw,
         "generated_at": datetime.now().isoformat(),
         "brief": brief,
         "seo": seo,
@@ -159,6 +164,9 @@ def save_result(result: dict) -> None:
         f"방향: {result['brief'].get('direction', '-')}",
         f"타깃: {result['brief'].get('target_reader', '-')}",
         "",
+        "[ 타깃 검색어 ]",
+        result.get("target_keyword") or "(미지정)",
+        "",
         "[ 메인 키워드 ]",
         result["seo"]["main_keyword"],
         "",
@@ -189,10 +197,16 @@ def dry_run() -> None:
     banner("드라이런 - 이번 주 발행 계획")
     print(f"\n  브랜드: {BRAND['name']} | {BRAND['location']}")
     print(f"  총 포스팅 수: {len(WEEKLY_POST_PLAN)}개\n")
+    current_week = None
     for plan in WEEKLY_POST_PLAN:
+        if plan.get("week") != current_week:
+            current_week = plan.get("week")
+            print(f"\n  [{current_week}주차]")
         print(
             f"  #{plan['post_id']:02d}  [{plan['funnel']:4s}]  {plan['type']:8s}  ->  {plan['topic_hint']}"
         )
+        if plan.get("target_keyword"):
+            print(f"        검색어: {plan['target_keyword']}")
     print("\n  ※ 실제 생성하려면 --dry-run 옵션을 제거하고 실행하세요.")
 
 

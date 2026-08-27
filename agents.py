@@ -78,13 +78,20 @@ def _parse_json_arr(raw: str, fallback: list) -> list:
 
 
 # 0 PM
-async def pm_brief(post_type: str, funnel: str, topic_hint: str) -> dict:
+async def pm_brief(
+    post_type: str, funnel: str, topic_hint: str, target_keyword: str = ""
+) -> dict:
     system = _load_agent_prompt("step_00_pm.md")
+    kw_line = (
+        f"- 타깃 검색어: {target_keyword} (독자가 네이버에 실제로 치는 말)\n"
+        if target_keyword else ""
+    )
     user = (
         f"이번 포스팅 정보:\n"
         f"- 포스팅 유형: {post_type}\n"
         f"- 퍼널: {funnel}\n"
-        f"- 주제 힌트: {topic_hint}\n\n"
+        f"- 주제 힌트: {topic_hint}\n"
+        f"{kw_line}\n"
         f"위 정보를 바탕으로 포스팅 브리프를 작성해주세요."
     )
     raw = await _call(system, user, "Step0 PM 브리프")
@@ -99,23 +106,38 @@ async def pm_brief(post_type: str, funnel: str, topic_hint: str) -> dict:
 
 
 # 1 SEO
-async def seo_strategist(post_type: str, funnel: str, topic_hint: str, brief: dict | None = None) -> dict:
+async def seo_strategist(
+    post_type: str,
+    funnel: str,
+    topic_hint: str,
+    brief: dict | None = None,
+    target_keyword: str = "",
+) -> dict:
     system = _load_agent_prompt("step_01_seo.md")
     direction = brief.get("direction", "") if brief else ""
     target = brief.get("target_reader", "") if brief else ""
     caution = brief.get("caution", "") if brief else ""
+    # 타깃 검색어가 지정되면 그것을 메인 키워드로 고정한다.
+    # 에이전트가 매번 새 키워드를 지어내면 발행 계획과 실측 순위를 맞출 수 없다.
+    kw_block = (
+        f"\n[고정 타깃 검색어]\n{target_keyword}\n"
+        f"이 표현을 main_keyword로 그대로 사용하세요. 임의로 바꾸지 마세요.\n"
+        f"title_candidates에도 이 표현이 변형 없이 들어가야 합니다.\n"
+        if target_keyword else ""
+    )
     user = (
         f"[PM 브리프]\n"
         f"포스팅 유형: {post_type} ({funnel})\n"
         f"주제: {topic_hint}\n"
         f"핵심 방향: {direction}\n"
         f"타깃 독자: {target}\n"
-        f"주의사항: {caution if caution else '없음'}\n\n"
+        f"주의사항: {caution if caution else '없음'}\n"
+        f"{kw_block}\n"
         f"위 브리프를 바탕으로 키워드 전략을 수립해주세요."
     )
     raw = await _call(system, user, "Step1 SEO 전략가")
     return _parse_json_obj(raw, {
-        "main_keyword": topic_hint.split()[0] if topic_hint else "통증",
+        "main_keyword": target_keyword or (topic_hint.split()[0] if topic_hint else "통증"),
         "context_keywords": BRAND["keywords"][:4],
         "title_candidates": [f"{topic_hint}이 계속되는 진짜 이유"],
         "comment_hook": "여러분은 이런 증상 느껴보신 적 있으세요?",
