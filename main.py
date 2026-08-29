@@ -82,7 +82,7 @@ async def run_pipeline(plan: dict, skip_bofu: bool = False) -> dict | None:
 
     # Step 3: Text Mining
     step_header(3, "텍스트마이닝 분석가 - 키워드 밀도 분석")
-    tm = await text_mining_analyst(draft, seo, post_type)
+    tm = await text_mining_analyst(draft, seo, post_type, funnel)
     print(f"     점수: {tm.get('score', '-')}/100")
     if tm.get("issues"):
         print(f"     이슈: {', '.join(tm['issues'][:3])}")
