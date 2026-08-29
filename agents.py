@@ -187,10 +187,14 @@ async def text_mining_analyst(draft: str, seo_data: dict, post_type: str) -> dic
         f"맥락 키워드: {', '.join(ctx_kws)}\n\n"
         f"[분석 대상 본문]\n{draft}\n\n"
         f"분석 항목:\n"
-        f"1. 메인 키워드가 첫 줄/첫 문장/마지막 문장 중 최소 2곳에 있는가\n"
-        f"2. 키워드 과다 반복(스팸성) 여부\n"
-        f"3. 차별 키워드 누락 여부\n"
-        f"4. 보완 후 revised_draft 제공"
+        f"1. 메인 키워드가 첫 문단에 자연스럽게 들어가 있는가\n"
+        f"2. 키워드 과다 반복(스팸성) 여부 — 5회 이상이면 줄일 것\n"
+        f"3. 맥락 키워드가 억지 없이 녹아 있는가 (변형 표현은 그대로 둘 것)\n"
+        f"4. 지역명은 케이스·경험형/전환형에만 필요. 정보성 글에 없는 것은 감점 대상이 아님\n"
+        f"5. 고칠 것이 있을 때만 revised_draft 제공. 없으면 원본 그대로\n\n"
+        f"문장이 어색해지면 키워드를 넣지 마세요. 넣을 자리가 없으면 "
+        f"본문을 고치지 말고 issues에만 적으세요.\n"
+        f"소제목 구조와 [이미지: ] 표시는 그대로 보존하세요."
     )
     raw = await _call(system, user, "Step3 텍스트마이닝")
     return _parse_json_obj(raw, {
