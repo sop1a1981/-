@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
-from config import BRAND, QC_CHECKLIST_ITEMS, THREADS_ALGO_RULES
+from config import BRAND
 
 _CALL_DELAY = 3
 _AGENTS_DIR = Path(__file__).parent / "agents"

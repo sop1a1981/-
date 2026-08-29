@@ -1,5 +1,5 @@
 """
-아로마스 스레드 팀에이전트 - 메인 오케스트레이터
+아로마스 네이버 블로그 팀에이전트 - 메인 오케스트레이터
 Step 0~7 순차 실행: PM -> SEO -> 라이터 -> 텍스트마이닝 -> QC -> PM CTA -> 카드뉴스 -> 디자이너
 
 사용법:
@@ -155,7 +155,7 @@ def save_result(result: dict) -> None:
     txt_path = OUTPUT_DIR / f"post_{pid:02d}_{slug}_{ts}.txt"
     lines = [
         "=" * 60,
-        f"아로마스 스레드 포스팅 #{pid}",
+        f"아로마스 네이버 블로그 포스팅 #{pid}",
         f"유형: {result['post_type']} ({result['funnel']})",
         f"생성일시: {result['generated_at']}",
         "=" * 60,
@@ -239,7 +239,7 @@ async def async_main(plans: list[dict], skip_bofu: bool) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="아로마스 스레드 팀에이전트")
+    parser = argparse.ArgumentParser(description="아로마스 네이버 블로그 팀에이전트")
     parser.add_argument("--post-id", type=int, help="특정 포스팅 ID만 생성 (1-10)")
     parser.add_argument("--dry-run", action="store_true", help="계획만 출력")
     parser.add_argument("--skip-bofu", action="store_true", help="전환형(BOFU) 건너뜀")
