@@ -94,7 +94,15 @@ async def run_pipeline(plan: dict, skip_bofu: bool = False) -> dict | None:
     print(f"     AI 작성 지수: {qc.get('ai_score', '-')}%  |  훅 강도: {qc.get('hook_score', '-')}/10")
     print(f"     검수 결과: {'통과' if qc.get('passed') else '수정 필요'}")
 
-    final_draft = qc.get("final_draft", revised)
+    # QC가 final_draft를 비우거나 null로 돌려주는 경우가 있다. 그대로 흘려보내면
+    # Step 6에서 slicing하다 터지므로, 직전 단계 원고로 되돌리고 경고한다.
+    final_draft = qc.get("final_draft") or revised or draft
+    if not final_draft or len(final_draft) < 200:
+        raise RuntimeError(
+            f"본문이 비었거나 너무 짧습니다({len(final_draft or '')}자). "
+            f"Step 2 라이터가 원고 대신 다른 것을 출력했을 수 있습니다 — "
+            f"CLAUDE.md가 에이전트 지침으로 새어 들어가지 않았는지 확인하세요."
+        )
 
     # Step 5: PM CTA (BOFU only)
     cta_result = None
